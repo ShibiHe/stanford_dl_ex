@@ -1,4 +1,4 @@
-function [f,g] = softmax_regression(theta, X,y)
+function [f,g] = softmax_regression_vec(theta, X,y)
   %
   % Arguments:
   %   theta - A vector containing the parameter values to optimize.
@@ -27,6 +27,27 @@ function [f,g] = softmax_regression(theta, X,y)
   %        Before returning g, make sure you form it back into a vector with g=g(:);
   %
 %%% YOUR CODE HERE %%%
+  Sigma=exp(theta'*X);
+  Sigma(end+1,:)=ones(1,size(Sigma,2));
+  Sigma(end+1,:)=sum(Sigma);
+  for i=1:m
+      k=y(i);
+      poss=log(Sigma(k,i)/Sigma(end,i));
+      f=f+poss;
+  end
+  f=-f;
+  
+  for k=1:9
+      for i=1:m
+          if y(i)==k
+              dot=1;
+          else
+              dot=0;
+          end
+          g(:,k)=g(:,k)+X(:,i)*(dot-Sigma(k,i)/Sigma(end,i));
+      end
+  end
+  g=-g;
   
   g=g(:); % make gradient a vector for minFunc
-
+end
